@@ -3926,5 +3926,6 @@ TABLE_FMT_MAP = {
     "csv": "csv",
     "tsv": "tsv",
     "latex": "latex",
-    "html": "html"
+    "html": "html",
+    "json": "json"
 }

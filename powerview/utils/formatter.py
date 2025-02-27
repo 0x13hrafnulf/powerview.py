@@ -41,6 +41,9 @@ class FORMATTER:
             csv_writer.writerows(filtered_entries)
             table_res = output.getvalue()
             output.close()
+        elif table_format == "json":
+            data = [dict(zip(headers, entry)) for entry in filtered_entries] if headers else filtered_entries
+            table_res = json.dumps(data, indent=4)
         else:
             table_res = table(
                 filtered_entries,
