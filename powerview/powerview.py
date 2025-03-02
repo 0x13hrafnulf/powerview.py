@@ -609,6 +609,7 @@ class PowerView:
 			identity = identity or getattr(args, 'identity', None)
 			security_identifier = security_identifier or getattr(args, 'security_identifier', None)
 			searchbase = searchbase or getattr(args, 'searchbase', self.root_dn)
+			resolveguids = resolveguids or getattr(args, 'resolveguids', False)
 
 		# Use the provided searchbase or default to the root DN
 		if not searchbase:

@@ -1177,6 +1177,8 @@ class ACLEnum:
         self.root_dn = root_dn
         self.objectdn = ''
         self.objectsid = ''
+        self.samaccountname = ''
+        self.objectcategory = ''
 
         self.__resolveguids = resolveguids
         self.__targetidentity = targetidentity
@@ -1220,6 +1222,7 @@ class ACLEnum:
                 secDesc = ldaptypes.SR_SECURITY_DESCRIPTOR(data=secDescData)
                 self.objectdn = entry.get('dn')
                 self.objectsid = objectsid
+                self.samaccountname = entry.get('attributes', {}).get('sAMAccountName')
                 dacl = self.parseDACL(secDesc['Dacl'])
                 dacl_dict['attributes'] = dacl
                 parsed_dacl.append(dacl_dict)
@@ -1243,6 +1246,7 @@ class ACLEnum:
 
         if ace['TypeName'] in ["ACCESS_ALLOWED_ACE", "ACCESS_ALLOWED_OBJECT_ACE", "ACCESS_DENIED_ACE", "ACCESS_DENIED_OBJECT_ACE"]:
             parsed_ace = {}
+            parsed_ace['ObjectSamaccountName'] = self.samaccountname
             parsed_ace['ObjectDN'] = self.objectdn
             parsed_ace['ObjectSID'] = format_sid(self.objectsid)
             parsed_ace['ACEType'] = ace['TypeName']
@@ -1255,7 +1259,9 @@ class ACLEnum:
                 parsed_ace['ActiveDirectoryRights'] = ",".join(self.parsePerms(ace["Ace"]["Mask"]["Mask"]))
                 parsed_ace['AccessMask'] = ",".join(self.parsePerms(ace['Ace']['Mask']['Mask']))
                 parsed_ace['InheritanceType'] = "None"
-                parsed_ace['SecurityIdentifier'] = self.powerview.convertfrom_sid(ace['Ace']['Sid'].formatCanonical())
+                parsed_ace['PrincipalSID'] = ace['Ace']['Sid'].formatCanonical()
+                if self.__resolveguids:
+                    parsed_ace['PrincipalSamaccountName'] = self.powerview.convertfrom_sid(ace['Ace']['Sid'].formatCanonical())
             
             elif ace['TypeName'] in ["ACCESS_ALLOWED_OBJECT_ACE", "ACCESS_DENIED_OBJECT_ACE"]:
                 # Parse Access Mask Flags
@@ -1279,7 +1285,9 @@ class ACLEnum:
                     parsed_ace['InheritanceType'] = None
                 
                 # Parse Trustee SID
-                parsed_ace['SecurityIdentifier'] = self.powerview.convertfrom_sid(ace['Ace']['Sid'].formatCanonical())
+                parsed_ace['PrincipalSID'] = ace['Ace']['Sid'].formatCanonical()
+                if self.__resolveguids:
+                    parsed_ace['PrincipalSamaccountName'] = self.powerview.convertfrom_sid(ace['Ace']['Sid'].formatCanonical())
         else:
             LOG.debug("ACE Type (%s) unsupported for parsing yet, feel free to contribute" % ace['TypeName'])
             parsed_ace = {'ACEType': ace['TypeName'], 'ACEFlags': ", ".join(_ace_flags) or "None", 'DEBUG': "ACE type not supported for parsing by dacleditor.py, feel free to contribute"}
