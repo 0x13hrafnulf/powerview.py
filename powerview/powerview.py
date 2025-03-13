@@ -1020,7 +1020,7 @@ class PowerView:
 		return entries
 
 	def get_domainforeigngroupmember(self, args=None):
-		group_members = self.get_domaingroupmember(multiple=True)
+		group_members = self.get_domaingroupmember(identity='*', multiple=True)
 		cur_domain_sid = self.get_domain()[0]['attributes']['objectSid']
 
 		if not group_members:
@@ -1073,6 +1073,7 @@ class PowerView:
 
 	def get_domaingroupmember(self, identity, args=None, multiple=False):
 		# get the identity group information
+
 		entries = self.get_domaingroup(identity=identity)
 
 		if len(entries) == 0:
