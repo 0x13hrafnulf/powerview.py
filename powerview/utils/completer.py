@@ -119,7 +119,7 @@ COMMANDS = {
     'Set-NetService':['-Computer','-Name','-DisplayName','-Path','-Password'],
     'Start-NetService':['-Computer','-Name'],
     'Stop-NetService':['-Computer','-Name'],
-    'Add-GPLink':['-GUID','-TargetIdentity','-LinkEnabled','-Enforced','-SearchBase','-Server','-OutFile'],
+    'Add-GPLink':['-GUID','-TargetIdentity','-LinkEnabled','-Enforced','-TargetSearchBase','-GPOSearchBase','-Server','-OutFile'],
     'Remove-GPLink':['-GUID','-TargetIdentity','-SearchBase','-Server','-OutFile'],
     'clear':'',
     'exit':'',
